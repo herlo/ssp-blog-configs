@@ -1,0 +1,32 @@
+{
+    "variables": {
+        "do_api_token": "{{env `DIGITAL_OCEAN_TEST_API_TOKEN`}}",
+        "do_droplet_name": "ssp-centos-7-x64"
+    },
+
+    "builders":
+    [
+      {
+        "type": "digitalocean",
+        "api_token": "{{user `do_api_token`}}",
+        "droplet_name": "{{user `do_droplet_name`}}",
+        "image": "centos-7-x64",
+        "region": "sfo1",
+        "size": "512mb",
+        "communicator": "ssh"
+      }
+
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "yum update -y",
+                "yum upgrade -y",
+                "yum localinstall \ https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm -y",
+                "yum install ansible nginx -y"
+            ]
+        }
+    ]
+}

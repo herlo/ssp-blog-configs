@@ -1,0 +1,6 @@
+.fuse*
+.py[oc]
+.retry
+
+build.hwm
+build.pw[di]
