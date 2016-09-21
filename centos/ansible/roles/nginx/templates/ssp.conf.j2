@@ -1,0 +1,39 @@
+# this file is managed by the ssp.com image. Feel free to edit it, but if
+# we update the system, it'll be blown away. ¯\_(ツ)_/¯
+
+server {
+    listen       80;
+    server_name  ssp.com sexysexypenguins.com www.sexysexypenguins.com sexysexypenguins.org www.sexysexypenguins.org;
+    access_log  /var/log/nginx/ssp.com-access_log;
+    error_log   /var/log/nginx/ssp.com-error_log;
+
+    root   {{ www_path }};
+
+    location / {
+        index  index.html index.htm;
+
+    location /misc {
+        autoindex  on; # Enable fancy indexes.
+        alias /srv/www/misc/;
+    }
+
+    location /.well-known {
+        autoindex  on; # Enable fancy indexes.
+        alias /srv/www/misc/;
+    }
+
+    location /tinker {
+        alias /srv/www/tinker;
+    }
+}
+
+server {
+    listen       80;
+    server_name  herlo.org www.herlo.org;
+
+    rewrite ^(.*)$ http://sexysexypenguins.com$1 permanent;
+
+    access_log  /var/log/nginx/herlo.org-access_log;
+    error_log   /var/log/nginx/herlo.org-error_log;
+}
+

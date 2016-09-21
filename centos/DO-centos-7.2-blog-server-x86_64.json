@@ -1,7 +1,8 @@
 {
     "variables": {
         "do_api_token": "{{env `DIGITAL_OCEAN_TEST_API_TOKEN`}}",
-        "do_droplet_name": "ssp-centos-7-x64"
+        "do_droplet_name": "ssp-centos-7-x64",
+        "do_region": "sfo1"
     },
 
     "builders":
@@ -11,9 +12,10 @@
         "api_token": "{{user `do_api_token`}}",
         "droplet_name": "{{user `do_droplet_name`}}",
         "image": "centos-7-x64",
-        "region": "sfo1",
+        "region": "{{ user `do_region`}}",
         "size": "512mb",
-        "communicator": "ssh"
+        "communicator": "ssh",
+        "snapshot_name": "ssp-snap-{{timestamp}}"
       }
 
     ],
@@ -22,11 +24,18 @@
         {
             "type": "shell",
             "inline": [
+                "yum makecache fast",
                 "yum update -y",
                 "yum upgrade -y",
-                "yum localinstall \ https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm -y",
-                "yum install ansible nginx -y"
+                "yum localinstall https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm -y",
+                "yum install ansible -y"
             ]
+        },
+        {
+            "type": "ansible-local",
+            "playbook_file": "ansible/setup.yml",
+            "playbook_dir": "./ansible"
         }
+
     ]
 }

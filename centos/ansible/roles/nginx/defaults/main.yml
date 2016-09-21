@@ -1,0 +1,5 @@
+---
+nginx_config_path: /etc/nginx
+nginx_site_filenames:
+  - ssp.conf
+

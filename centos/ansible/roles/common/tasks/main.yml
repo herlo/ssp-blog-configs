@@ -1,0 +1,28 @@
+---
+- lineinfile:
+    dest: /etc/selinux/config
+    regexp: "^SELINUX="
+    line: "SELINUX=enforcing"
+
+- name: Add wheel users
+  user:
+    name: "{{ item.key }}"
+    comment: "{{ item.value.comment }}"
+    uid: "{{ item.value.uid }}"
+    group: wheel
+  with_dict: "{{ wheel_users }}"
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+
+- name: Set up authorized_keys for the users
+  authorized_key:
+    user: "{{ item[0] }}"
+    key: "{{ item[1] }}"
+  with_nested:
+    - "{{ public_keys }}"
+    - [ keys ]

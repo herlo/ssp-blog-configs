@@ -1,0 +1,17 @@
+---
+www_path: /srv/www/hugo
+
+# users are in the following order
+#
+#wheel_users:
+#  user: [ uid, comment_string ]
+
+wheel_users:
+  herlo:
+    uid: 1000
+    comment: Clint Savage
+    public_keys:
+      - ~/.ssh/herlo_rsa.pub
+      - ~/.ssh/rh_rsa.pub
+
+

@@ -1,0 +1,19 @@
+---
+- name: enable hugo repo
+  get_url:
+    url: "{{ hugo_repo_url }}"
+    dest: /etc/yum.repos.d/hugo-copr.repo
+
+- name: install hugo
+  yum: name=hugo state=present
+
+- name: "Create hugo paths"
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+      - "{{ www_path }}"
+      - "{{ hugo_git_path }}"
+
+
+
