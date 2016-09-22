@@ -4,14 +4,6 @@
     regexp: "^SELINUX="
     line: "SELINUX=enforcing"
 
-- name: Add wheel users
-  user:
-    name: "{{ item.key }}"
-    comment: "{{ item.value.comment }}"
-    uid: "{{ item.value.uid }}"
-    group: wheel
-  with_dict: "{{ wheel_users }}"
-
 - name: Allow 'wheel' group to have passwordless sudo
   lineinfile:
     dest: /etc/sudoers
@@ -19,10 +11,20 @@
     regexp: '^%wheel'
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
 
+- name: Add wheel users
+  user:
+    name: "{{ item.0.name }}"
+    comment: "{{ item.0.comment }}"
+    uid: "{{ item.0.uid }}"
+    group: wheel
+  with_subelements:
+    - "{{ wheel_users }}"
+    - public_keys
+
 - name: Set up authorized_keys for the users
   authorized_key:
-    user: "{{ item[0] }}"
-    key: "{{ item[1] }}"
-  with_nested:
-    - "{{ public_keys }}"
-    - [ keys ]
+    user: "{{ item.0.name }}"
+    key: "{{ lookup('file', item.1) }}"
+  with_subelements:
+    - "{{ wheel_users }}"
+    - public_keys
