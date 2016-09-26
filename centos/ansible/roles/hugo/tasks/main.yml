@@ -15,5 +15,9 @@
       - "{{ www_path }}"
       - "{{ hugo_git_path }}"
 
+# git init the hugo_git_path
 
+# pull the hugo_repository to the hugo_git_path
+
+# add git hook to publish updates
 
