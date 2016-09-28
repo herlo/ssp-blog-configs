@@ -3,28 +3,23 @@
 
 server {
     listen       80;
-    server_name  ssp.com sexysexypenguins.com www.sexysexypenguins.com sexysexypenguins.org www.sexysexypenguins.org;
+    server_name  ssp.net ssp.com sexysexypenguins.com www.sexysexypenguins.com sexysexypenguins.org www.sexysexypenguins.org;
     access_log  /var/log/nginx/ssp.com-access_log;
     error_log   /var/log/nginx/ssp.com-error_log;
 
     root   {{ www_path }};
 
     location / {
-        index  index.html index.htm;
+        index index.html index.htm;
+    }
 
-    location /misc {
+{% for location, path in nginx_locations.iteritems() %}
+    location {{ location }} {
         autoindex  on; # Enable fancy indexes.
-        alias /srv/www/misc/;
+        alias {{ path }};
     }
 
-    location /.well-known {
-        autoindex  on; # Enable fancy indexes.
-        alias /srv/www/misc/;
-    }
-
-    location /tinker {
-        alias /srv/www/tinker;
-    }
+{% endfor %}
 }
 
 server {

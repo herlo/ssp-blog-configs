@@ -28,3 +28,11 @@
   with_subelements:
     - "{{ wheel_users }}"
     - public_keys
+
+- name: update all packages
+  yum: name=* state=latest
+
+- name: Install package niceties
+  yum: name={{ item }} state=present
+  with_items:
+    - "{{ setup_pkgs }}"

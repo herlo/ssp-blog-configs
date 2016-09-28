@@ -9,3 +9,11 @@ wheel_users:
     - /tmp/herlo_rsa.pub
     - /tmp/rh_rsa.pub
 
+setup_pkgs:
+ - vim-enhanced
+ - git
+
+nginx_locations:
+  /misc: /srv/www/misc
+  /.well-known: /srv/www/well-known
+  /tinker: /srv/www/tinker
