@@ -3,9 +3,12 @@
 
 - name: make nginx directories
   file:
-    path: {{ item[1] }}
+    path: "{{ item[1] }}"
     state: directory
-  with_items: "{{ nginx_locations }}
+  with_items: "{{ nginx_locations }}"
+
+- name: Enabled the nginx service
+  service: name=nginx state=started enabled=yes
 
 - name: Configure nginx.conf
   template:
@@ -13,9 +16,6 @@
     dest: "{{ nginx_config_path }}/conf.d/{{ item }}"
     mode: 0644
   with_items: "{{ nginx_site_filenames }}"
-
-- name: Enabled the nginx service
-  service: name=nginx state=started enabled=yes
 
 - name: install firewalld
   yum: name=firewalld state=present
@@ -28,3 +28,4 @@
 
 - name: reload firewalld
   command: firewall-cmd --reload
+

@@ -11,12 +11,28 @@
     regexp: '^%wheel'
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
 
+- name: Add www group
+  group:
+    name: www
+    gid: 5000
+
+- name: Add www users
+  user:
+    name: "{{ item.0.name }}"
+    comment: "{{ item.0.comment }}"
+    uid: "{{ item.0.uid }}"
+    groups: www
+  with_subelements:
+    - "{{ www_users }}"
+    - public_keys
+
 - name: Add wheel users
   user:
     name: "{{ item.0.name }}"
     comment: "{{ item.0.comment }}"
     uid: "{{ item.0.uid }}"
-    group: wheel
+    groups: wheel
+    append: yes
   with_subelements:
     - "{{ wheel_users }}"
     - public_keys
@@ -36,3 +52,4 @@
   yum: name={{ item }} state=present
   with_items:
     - "{{ setup_pkgs }}"
+

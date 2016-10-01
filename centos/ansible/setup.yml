@@ -5,5 +5,5 @@
   remote_user: '{{ user | default("root") }}'
   roles:
     - common
-    - hugo
     - nginx
+    - hugo
