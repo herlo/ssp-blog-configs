@@ -7,17 +7,60 @@
 - name: install hugo
   yum: name=hugo state=present
 
-- name: "Create hugo paths"
+- name: "Create www path"
   file:
     path: "{{ item }}"
     state: directory
+    owner: nginx
+    group: www
+    mode: 0775
   with_items:
       - "{{ www_path }}"
-      - "{{ hugo_git_path }}"
+      - "{{ backup_www_path }}"
 
-# git init the hugo_git_path
+- name: "Set SGID on www path"
+  file:
+    path: "{{ www_path }}"
+    state: directory
+    owner: nginx
+    group: www
+    mode: "g+s"
+  notify: restart nginx
 
-# pull the hugo_repository to the hugo_git_path
+- name: create empty index.html
+  file:
+    path: "{{ www_path }}/index.html"
+    state: touch
 
-# add git hook to publish updates
+- name: "Create hugo paths"
+  file:
+    path: "{{ hugo_git_path }}"
+    state: directory
+    group: www
+    mode: "u+rwx,g+rwxs,o+rx"
 
+- name: git init the hugo_git_path
+  git:
+    bare: yes
+    dest: "{{ hugo_git_path }}"
+    clone: yes
+    update: no
+    repo: git://github.com/herlo/ssp-blog.git
+
+- name: add git hook to publish updates
+  template:
+    src: post-receive.j2
+    dest: "{{ hugo_git_path }}/hooks/post-receive"
+    mode: 0755
+
+- name: set perms on hugo_git_path directories
+  shell: "for file in $(find {{ hugo_git_path }}/ -type d); do chmod 2775 $file; done"
+
+- name: git repo permission update
+  cron:
+    day: "*"
+    minute: 0
+    hour: 2
+    user: "root"
+    job: "for file in $(find {{ hugo_git_path }}/ -type d); do chmod 2775 $file; done"
+    cron_file: ansible_hugo_git_path_perms
