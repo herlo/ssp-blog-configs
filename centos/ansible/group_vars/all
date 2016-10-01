@@ -1,7 +1,16 @@
 ---
 www_path: /srv/www/hugo
+backup_www_path: /srv/backups/hugo
 
 wheel_users:
+  - name: herlo
+    uid: 1000
+    comment: Clint Savage
+    public_keys:
+    - /tmp/herlo_rsa.pub
+    - /tmp/rh_rsa.pub
+
+www_users:
   - name: herlo
     uid: 1000
     comment: Clint Savage
@@ -12,6 +21,7 @@ wheel_users:
 setup_pkgs:
  - vim-enhanced
  - git
+ - python-docutils
 
 nginx_locations:
   /misc: /srv/www/misc
